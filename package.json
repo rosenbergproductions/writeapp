@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@codemirror/lang-python": "^6.2.1",
     "@codemirror/language": "^6.11.2",
     "@lezer/highlight": "^1.2.1",
     "@lezer/lr": "^1.4.2",
@@ -21,11 +22,9 @@
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
-  
- "overrides": {
+  "overrides": {
     "@codemirror/state": "^6.4.1"
   },
-
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

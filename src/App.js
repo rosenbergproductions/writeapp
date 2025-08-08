@@ -1,29 +1,26 @@
-import React, { useState, useEffect, useMemo } from 'react';
+// src/App.js
+import React, { useState, useEffect, useMemo, useCallback } from 'react'; // 1. Import useCallback
 import './App.css';
 import MenuBar from './components/MenuBar';
 import Sidebar from './components/Sidebar';
 import Auth from './pages/Auth';
 import FileBrowser from './components/FileBrowser';
 import SaveAsModal from './components/SaveAsModal';
-import CodeMirrorEditor from './components/CodeMirrorEditor'; // Import the new editor
+import CodeMirrorEditor from './components/CodeMirrorEditor';
 import { supabase } from './services/supabase';
-
 
 function App() {
   const [session, setSession] = useState(null);
   const [documents, setDocuments] = useState([]);
   const [currentDocument, setCurrentDocument] = useState(null);
-  
   const [showFileBrowser, setShowFileBrowser] = useState(false);
   const [showSaveAsModal, setShowSaveAsModal] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-  
-
-  // State management is now very simple: the content is always raw text.
-  const handleContentChange = (newContent) => {
+  // 2. Wrap handleContentChange in useCallback
+  const handleContentChange = useCallback((newContent) => {
     setCurrentDocument(prevDoc => ({...prevDoc, content: newContent}));
-  };
+  }, []); // The empty dependency array means this function is created only once
 
   const handleNew = () => {
     setCurrentDocument({ id: null, title: 'Untitled', content: 'INT. A NEW SCENE - DAY\n\n' });
@@ -57,6 +54,12 @@ function App() {
     }
   };
   
+  const fetchDocuments = async () => {
+    const { data, error } = await supabase.from('documents').select('*');
+    if (error) console.error('Error fetching documents:', error);
+    else setDocuments(data);
+  };
+  
   useEffect(() => {
     const fetchSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -70,16 +73,6 @@ function App() {
   useEffect(() => {
     if (session) fetchDocuments();
   }, [session]);
-  
-  
-
-  const fetchDocuments = async () => {
-    const { data, error } = await supabase.from('documents').select('*');
-    if (error) console.error('Error fetching documents:', error);
-    else setDocuments(data);
-  };
-
-
   
   const handleOpen = () => setShowFileBrowser(true);
   const handleSaveAs = () => setShowSaveAsModal(true);

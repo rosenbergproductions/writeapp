@@ -1,40 +1,78 @@
 // src/components/CodeMirrorEditor.js
-import React, { useRef } from 'react';
-import CodeMirror from '@uiw/react-codemirror';
-import { EditorView } from "@codemirror/view";
-// UPDATED: No longer need 'parser' or 'styleTags' here.
-
-
-// Your theme remains the same, targeting the standard Lezer tags.
-
-
+import React, { useMemo, useRef, useEffect } from 'react';
+import { EditorState } from '@codemirror/state';
+import { EditorView, keymap } from '@codemirror/view';
+import { defaultKeymap } from '@codemirror/commands';
+import { fountain } from '../fountain-lang';
+import { syntaxHighlighting, HighlightStyle } from '@codemirror/language';
+import { tags as t } from '@lezer/highlight';
 
 const CodeMirrorEditor = ({ content, onChange }) => {
-  const editorViewRef = useRef(null);
+  const editorRef = useRef(null);
+  const viewRef = useRef(null);
 
-  const handleCreateEditor = (view) => {
-    editorViewRef.current = view;
-  };
+  const extensions = useMemo(() => {
+    const fountainHighlightStyle = HighlightStyle.define([
+      { tag: t.keyword, fontWeight: "bold", textTransform: "uppercase" },
+      { tag: t.strong, class: "cm-character" },
+      { tag: t.string, display: "block", marginLeft: "12ch", marginRight: "12ch" },
+      { tag: t.emphasis, textAlign: "center", display: "block", marginLeft: "18ch", marginRight: "18ch" },
+      { tag: t.heading, textAlign: "right", textTransform: "uppercase", display: "block", marginTop: "1em" },
+      { tag: t.content, display: "block", marginTop: "1em" }
+    ]);
 
-  return (
-    <CodeMirror
-      value={content}
-      height="100%"
-      style={{ height: '100%', width: '60ch' }}
-      // UPDATED: The extensions array is much cleaner now.
-      extensions={[
-        EditorView.lineWrapping,
-      ]}
-      onChange={onChange}
-      onCreateEditor={handleCreateEditor}
-      onBlur={() => editorViewRef.current?.focus()}
-      basicSetup={{
-        lineNumbers: false,
-        foldGutter: false,
-        highlightActiveLine: false,
-      }}
-    />
-  );
+    const editorChromeTheme = EditorView.theme({
+        "&": { height: "100%" }
+    });
+
+    const updateListener = EditorView.updateListener.of((update) => {
+      if (update.docChanged) {
+        onChange(update.state.doc.toString());
+      }
+    });
+
+    return [
+      keymap.of(defaultKeymap),
+      EditorView.lineWrapping,
+      fountain,
+      syntaxHighlighting(fountainHighlightStyle),
+      editorChromeTheme,
+      updateListener
+    ];
+  }, [onChange]);
+
+  useEffect(() => {
+    if (editorRef.current && !viewRef.current) {
+        const startState = EditorState.create({
+            doc: content || '',
+            extensions: extensions,
+        });
+
+        const view = new EditorView({
+            state: startState,
+            parent: editorRef.current,
+        });
+        viewRef.current = view;
+    }
+
+    return () => {
+        if (viewRef.current) {
+            viewRef.current.destroy();
+            viewRef.current = null;
+        }
+    };
+  }, [extensions]);
+
+  useEffect(() => {
+    const view = viewRef.current;
+    if (view && content !== view.state.doc.toString()) {
+      view.dispatch({
+        changes: { from: 0, to: view.state.doc.length, insert: content || '' },
+      });
+    }
+  }, [content]);
+
+  return <div ref={editorRef} style={{ height: '100%' }} />;
 };
 
 export default CodeMirrorEditor;
