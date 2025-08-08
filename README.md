@@ -1,70 +1,93 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+### **WriteApp: Architectural Design Outline**
 
-In the project directory, you can run:
+#### **1. Core Architecture: Serverless SPA**
 
-### `npm start`
+- **Model:** A modern **Single-Page Application (SPA)** for the frontend that communicates directly with **Supabase** for all backend services.
+- **Key Principle:** This model eliminates the need for a traditional, self-managed backend server (like Node.js), leading to faster development and easier scaling.
+* * *
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+#### **2. Frontend (The Browser Application)**
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- **Technology:** A JavaScript framework like **React**.
+- **Responsibilities:**
 
-### `npm test`
+    - **UI and State Management:** Renders all components (editor, menus, sidebar) and manages the application's state (e.g., current text, open modals).
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+    - **Fountain Syntax Parsing:** Parses the raw plaintext in the browser using a library like `fountain-js`. It then applies formatting styles using CSS.
 
-### `npm run build`
+    - **Client-Side Logic:** Handles features like the "Navigator" sidebar and basic document statistics by processing the parsed text data directly.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+    - **Direct API Calls:** Uses the `supabase-js` client library to securely communicate with the backend for data and authentication.
+* * *
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+#### **3. Backend (The Supabase Platform)**
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- **Role:** Acts as the complete backend, providing a suite of integrated services.
+- **Core Services Used:**
 
-### `npm run eject`
+    - **Authentication:** Manages user sign-up, login, and session control via Supabase Auth.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+    - **Database (PostgreSQL):**
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+        - Stores all persistent data (user documents, bin snippets).
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+        - Uses **Row Level Security (RLS)** to ensure users can only access their own data.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+        - The database only ever stores **raw plaintext**, not formatted text.
 
-## Learn More
+    - **Realtime:**
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+        - **Presence:** To show who is currently active in a document.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+        - **Broadcast:** To send real-time text changes between clients for collaborative editing.
+* * *
 
-### Code Splitting
+#### **4. Advanced Features & Extensibility**
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+- **Method:** Use **Supabase Edge Functions** for custom server-side logic that shouldn't run in the browser.
+- **Use Cases:**
 
-### Analyzing the Bundle Size
+    - **File Exports (PDF/FDX):** An Edge Function takes raw text, uses a library to generate the file, and saves it to **Supabase Storage**.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+    - **Heavy Data Processing:** Offloading complex analysis that might slow down the browser.
 
-### Making a Progressive Web App
+    - **Secure API Integrations:** Communicating with third-party services using secret API keys hidden from the frontend.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+This architecture creates a powerful, secure, and scalable application where the frontend focuses on user experience and the backend provides robust, ready-to-use services.
 
-### Advanced Configuration
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+#### **Core Writing & Editing ✍️**
 
-### Deployment
+- **Fountain Syntax Recognition:** The editor understands the Fountain plaintext screenwriting format.
+- **Live Screenplay Formatting:** Automatically formats plaintext into standard screenplay layout (centered character names, indented dialogue, etc.) as you type.
+- **Minimalist Editor:** A clean, 60-character-wide writing canvas designed for focus.
+- **Extensible Menu Bar:** A familiar, Google Docs-style menu (`File`, `Edit`, `Format`, etc.) designed for future expansion.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+#### **File Management & Data 📂**
 
-### `npm run build` fails to minify
+- **Cloud Storage:** All documents are securely saved to the cloud via Supabase.1
+- **Standard File Operations:** Full support for `New`, `Open`, `Save`, and `Save As` functions.
+- **Modal File Browser:** An intuitive popup window for opening existing documents from a user's library.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+#### **User & Collaboration 👥**
+
+- **Secure Authentication:** Users can sign up and log in to access their private work.
+- **Real-time Collaborative Editing:** (Future capability) Multiple users can edit the same document simultaneously.
+- **Collaborator Presence:** (Future capability) See who is currently viewing or editing a document with you.
+
+#### **Productivity & Analysis Tools 📊**
+
+- **Multi-Modal Sidebar:** A collapsible sidebar that can switch between different modes.
+
+    - **Navigator Mode:** Provides a clickable document outline based on scene headings for quick navigation.
+
+    - **Bin Mode:** A dedicated space to store and manage snippets of text, research, or ideas.
+- **Document Statistics:** Provides insights like estimated page count, scene count, and more.2
+- **Character Analysis:** Analyzes character dialogue counts and scene presence within the script.
+
+#### **Export & Integration 📄**
+
+- **PDF Export:** Generate and download a professionally formatted PDF of your screenplay.
+- **FDX Export:** Export your script to the Final Draft `.fdx` format for compatibility with industry-standard software.
