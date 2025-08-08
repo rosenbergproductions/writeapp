@@ -6,6 +6,7 @@ import Editor from './components/Editor';
 import Auth from './pages/Auth';
 import FileBrowser from './components/FileBrowser';
 import SaveAsModal from './components/SaveAsModal';
+import FountainPreview from './components/FountainPreview';
 import { supabase } from './services/supabase';
 
 function App() {
@@ -110,6 +111,7 @@ function App() {
             onOpen={handleOpen}
             onSave={handleSave}
             onSaveAs={handleSaveAs}
+            currentDocument={currentDocument}
           />
           <div className="main-content">
             <Sidebar />
@@ -118,6 +120,9 @@ function App() {
               onChange={(content) =>
                 setCurrentDocument({ ...currentDocument, content })
               }
+            />
+            <FountainPreview
+              content={currentDocument ? currentDocument.content : ''}
             />
           </div>
           <FileBrowser

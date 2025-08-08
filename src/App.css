@@ -16,8 +16,9 @@
 }
 
 .editor {
-  flex-grow: 1;
+  flex: 1 1 0%; /* flex-grow, flex-shrink, flex-basis */
   padding: 20px;
+  max-width: 60ch;
 }
 
 .editor textarea {
@@ -25,4 +26,50 @@
   height: 100%;
   resize: none;
   border: 1px solid #ccc;
+}
+
+.fountain-preview-pane {
+  flex: 1 1 0%; /* flex-grow, flex-shrink, flex-basis */
+  padding: 20px;
+  border-left: 1px solid #eee;
+  overflow-y: auto;
+  font-family: 'Courier New', Courier, monospace;
+  max-width: 60ch;
+}
+
+.scene-heading {
+  text-transform: uppercase;
+  font-weight: bold;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.character {
+  text-align: center;
+  margin-left: 15ch;
+  margin-right: 15ch;
+}
+
+.dialogue {
+  margin-left: 11ch;
+  margin-right: 10ch;
+  max-width: 34ch;
+  word-break: break-word;
+}
+
+.parenthetical {
+  text-align: center;
+  margin-left: 13ch;
+  margin-right: 13ch;
+}
+
+.transition {
+  text-align: right;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.action {
+  margin-top: 1em;
+  margin-bottom: 1em;
 }

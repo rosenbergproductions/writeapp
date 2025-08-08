@@ -1,10 +1,13 @@
 import React from 'react';
 import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
 
-const MenuBar = ({ onNew, onOpen, onSave, onSaveAs }) => {
+const MenuBar = ({ onNew, onOpen, onSave, onSaveAs, currentDocument }) => {
   return (
     <Navbar bg="light" expand="lg">
       <Navbar.Brand href="#home">WriteApp</Navbar.Brand>
+      <Navbar.Text>
+        {currentDocument ? currentDocument.title || 'Untitled' : ''}
+      </Navbar.Text>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
