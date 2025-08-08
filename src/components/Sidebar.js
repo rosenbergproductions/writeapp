@@ -1,8 +1,8 @@
 import React from 'react';
 
-const Sidebar = () => {
+const Sidebar = ({ className }) => {
   return (
-    <div className="sidebar">
+    <div className={`sidebar ${className}`}>
       <h5>Sidebar</h5>
       <ul className="nav flex-column">
         <li className="nav-item">

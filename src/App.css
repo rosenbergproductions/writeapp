@@ -4,90 +4,11 @@
   height: 100vh;
 }
 
-.main-content {
-  display: flex;
-  flex-grow: 1;
-  position: relative;
-}
-
-.sidebar {
-  width: 250px;
-  padding: 20px;
-  background-color: #f8f9fa;
-  transition: width 0.3s ease-in-out;
-}
-
-.sidebar.collapsed {
-  width: 0;
-  padding: 0;
-  overflow: hidden;
-}
-
-/* This rule has been updated from .editor to target the new component */
-.wysiwyg-editor {
-  padding: 20px;
-  width: 60ch;
-  border: 1px solid #ccc;
-  overflow-y: auto;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  top: 20px;
-  bottom: 20px;
-}
-
-.fountain-preview-pane {
-  flex: 1 1 0%; /* flex-grow, flex-shrink, flex-basis */
-  padding: 20px;
-  border-left: 1px solid #eee;
-  overflow-y: auto;
-  font-family: 'Courier New', Courier, monospace;
-  max-width: 60ch;
-}
-
-.ProseMirror:focus {
-  outline: none;
-}
-
-.scene-heading {
-  text-transform: uppercase;
-  font-weight: bold;
-  margin-top: 1em;
-  margin-bottom: 1em;
-}
-
-.character {
-  text-align: center;
-  margin-left: 15ch;
-  margin-right: 15ch;
-}
-
-.dialogue {
-  margin-left: 11ch;
-  margin-right: 10ch;
-  max-width: 34ch;
-  word-break: break-word;
-}
-
-.parenthetical {
-  text-align: center;
-  margin-left: 13ch;
-  margin-right: 13ch;
-}
-
-.transition {
-  text-align: right;
-  margin-top: 1em;
-  margin-bottom: 1em;
-}
-
-.action {
-  margin-top: 1em;
-  margin-bottom: 1em;
-}
-
 .navbar {
   position: relative;
+  flex-shrink: 0;
+  z-index: 101; /* Ensure navbar is always on top */
+  background-color: #fff !important; /* Pure white background */
 }
 
 .document-title {
@@ -95,4 +16,50 @@
   left: 50%;
   transform: translateX(-50%);
   font-weight: bold;
+}
+
+.main-content {
+  display: flex;
+  flex-grow: 1;
+  overflow: hidden;
+  justify-content: center; /* Center content horizontally */
+  align-items: stretch; /* Allow editor-container to stretch vertically */
+  position: relative; /* Needed for sidebar absolute positioning context */
+}
+
+.sidebar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 250px;
+  padding: 20px;
+  background-color: #fff; /* White background */
+  flex-shrink: 0;
+  z-index: 100; /* Ensure sidebar is above editor */
+  transition: transform 0.3s ease-in-out; /* Smooth transition */
+}
+
+.sidebar.hidden {
+  transform: translateX(-100%);
+}
+
+.editor-container {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center; /* Horizontally centers the editor */
+  overflow-y: auto;
+  background-color: #fff; /* White background */
+  padding: 20px 0;
+  position: relative; /* Needed for z-index to work */
+  z-index: 1; /* Ensure editor is below sidebar when open */
+}
+
+.editor-container > .cm-editor {
+  width: 60ch;
+  min-width: 60ch;
+  max-width: 60ch;
+  height: 100%;
+  border: 1px solid #ccc;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
