@@ -15,6 +15,7 @@ function App() {
   const [currentDocument, setCurrentDocument] = useState(null);
   const [showFileBrowser, setShowFileBrowser] = useState(false);
   const [showSaveAsModal, setShowSaveAsModal] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   useEffect(() => {
     const fetchSession = async () => {
@@ -102,6 +103,10 @@ function App() {
     setShowFileBrowser(false);
   };
 
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
   return (
     <div className="App">
       {session ? (
@@ -112,9 +117,10 @@ function App() {
             onSave={handleSave}
             onSaveAs={handleSaveAs}
             currentDocument={currentDocument}
+            toggleSidebar={toggleSidebar}
           />
           <div className="main-content">
-            <Sidebar />
+            {isSidebarOpen && <Sidebar />}
             <Editor
               content={currentDocument ? currentDocument.content : ''}
               onChange={(content) =>

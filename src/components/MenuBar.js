@@ -1,13 +1,13 @@
 import React from 'react';
-import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
+import { Navbar, Nav, NavDropdown, Button } from 'react-bootstrap';
 
-const MenuBar = ({ onNew, onOpen, onSave, onSaveAs, currentDocument }) => {
+const MenuBar = ({ onNew, onOpen, onSave, onSaveAs, currentDocument, toggleSidebar }) => {
   return (
     <Navbar bg="light" expand="lg">
       <Navbar.Brand href="#home">WriteApp</Navbar.Brand>
-      <Navbar.Text>
+      <div className="document-title">
         {currentDocument ? currentDocument.title || 'Untitled' : ''}
-      </Navbar.Text>
+      </div>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
@@ -29,6 +29,9 @@ const MenuBar = ({ onNew, onOpen, onSave, onSaveAs, currentDocument }) => {
             <NavDropdown.Item href="#action/5.2">Italic</NavDropdown.Item>
             <NavDropdown.Item href="#action/5.3">Underline</NavDropdown.Item>
           </NavDropdown>
+        </Nav>
+        <Nav>
+          <Button variant="outline-secondary" onClick={toggleSidebar}>Toggle Sidebar</Button>
         </Nav>
       </Navbar.Collapse>
     </Navbar>
