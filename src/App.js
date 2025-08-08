@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import MenuBar from './components/MenuBar';
 import Sidebar from './components/Sidebar';
-import Editor from './components/Editor';
 import Auth from './pages/Auth';
 import FileBrowser from './components/FileBrowser';
 import SaveAsModal from './components/SaveAsModal';
-import FountainPreview from './components/FountainPreview';
+import WysiwygEditor from './components/WysiwygEditor';
 import { supabase } from './services/supabase';
 
 function App() {
@@ -121,14 +120,11 @@ function App() {
           />
           <div className="main-content">
             {isSidebarOpen && <Sidebar />}
-            <Editor
+            <WysiwygEditor
               content={currentDocument ? currentDocument.content : ''}
               onChange={(content) =>
                 setCurrentDocument({ ...currentDocument, content })
               }
-            />
-            <FountainPreview
-              content={currentDocument ? currentDocument.content : ''}
             />
           </div>
           <FileBrowser
